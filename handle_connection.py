@@ -25,13 +25,17 @@ def handle_connection(connection):
 
       elif (data == 'SEARCH'):
         connection.sendall('SEARCH_OK'.encode())
+
         # Expects an file name to search for
         file_name = connection.recv(1024).decode()
-        # TODO: Search for file in db and return list of peers
-        print(f'Search for peers with the file {file_name}')
-        connection.sendall(f'List of peers with the requested file {file_name}: [...]'.encode())
 
-
+        peers_with_file_array = searchFile(file_name)
+        if (peers_with_file_array == -1):
+          connection.sendall(f'No peers with the file {file_name} were found.'.encode())
+        else:
+          delimiter = "\n"
+          files_string = delimiter.join(peers_with_file_array) 
+          connection.sendall(files_string.encode())
 
     except:
       print('Ending connection')

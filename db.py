@@ -38,16 +38,12 @@ def searchFile(file_name):
   data["data"]
   for peer in data["data"]:
     if file_name in peer["files"]:
-      peers_with_file.append({
-        "peer_ip": peer["peer_ip"],
-        "peer_port": peer["peer_port"]
-      })
+      peer_string = str(peer["peer_ip"]) + ':' + str(peer["peer_port"])
+      peers_with_file.append(peer_string)
   if (len(peers_with_file) > 0):
     return peers_with_file
   else:
-    print("Not peers with the file were found")
     return -1
-  print(peers_with_file)
 
 def updatePeerData(files_array, peer_ip, peer_port):
   # Check if file is already being used by another process
