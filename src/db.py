@@ -45,7 +45,8 @@ def searchFile(file_name):
   else:
     return -1
 
-def updatePeerData(files_array, peer_ip, peer_port):
+def updatePeerData(new_file_name, peer_ip, peer_port):
+  print('updating db...')
   # Check if file is already being used by another process
   with open(FILE_NAME, "r") as file:
       data = json.load(file)
@@ -61,8 +62,9 @@ def updatePeerData(files_array, peer_ip, peer_port):
     # Search for the peer data to update
     for peer in data["data"]:
       if (peer["peer_ip"] == peer_ip and peer["peer_port"] == peer_port):
-        peer["files"] = files_array
+        peer["files"].append(new_file_name)
 
     data["lock"] = False
     with open(FILE_NAME, "w") as file:
       json.dump(data, file)
+    print(f'peer {peer_port} data updated with file {new_file_name}')
