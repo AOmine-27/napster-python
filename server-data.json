@@ -1,24 +1,5 @@
 {
   "lock": false,
   "data": [
-    {
-      "peer_ip": "127.0.0.1",
-      "peer_port": "9000",
-      "files": [
-        ".DS_Store",
-        "arquivo1.txt",
-        "video.mp4"
-      ]
-    },
-    {
-      "peer_ip": "127.0.0.1",
-      "peer_port": "9003",
-      "files": [
-        "video10.mp4",
-        ".DS_Store",
-        "arquivo1.txt",
-        "video.mp4"
-      ]
-    }
   ]
 }

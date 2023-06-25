@@ -1,7 +1,6 @@
 import socket
 import multiprocessing
 import os
-from handle_connection import handle_connection
 from db import appendPeerData, searchFile, clearDb, updatePeerData
 
 class Server:
