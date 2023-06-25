@@ -29,7 +29,6 @@ def clearDb():
   data["data"] = []
   with open(FILE_NAME, "w") as file:
     json.dump(data, file)
-  print("DB cleared")
 
 def searchFile(file_name):
   peers_with_file = []
@@ -46,7 +45,6 @@ def searchFile(file_name):
     return -1
 
 def updatePeerData(new_file_name, peer_ip, peer_port):
-  print('updating db...')
   # Check if file is already being used by another process
   with open(FILE_NAME, "r") as file:
       data = json.load(file)
@@ -67,4 +65,4 @@ def updatePeerData(new_file_name, peer_ip, peer_port):
     data["lock"] = False
     with open(FILE_NAME, "w") as file:
       json.dump(data, file)
-    print(f'peer {peer_port} data updated with file {new_file_name}')
+    # print(f'peer {peer_port} data updated with file {new_file_name}')

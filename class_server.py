@@ -9,17 +9,13 @@ class Server:
     self.port = port
     self.buffer_size = buffer_size
     self.server_socket = socket.socket()
-
+    clearDb()
     self.server_socket.bind((self.ip, self.port))
-    print(f'Server will be using host {self.ip} and port {self.port}')
 
   def start(self):
     self.server_socket.listen(5)
-    print('Server started...')
     while True:
       client_connection, client_address = self.server_socket.accept()
-      print('Connected to', client_address)
-      print('Dispatching to new process...')
       process = multiprocessing.Process(target=self.handleConnection, args=(client_connection,))
       process.start()
 
@@ -31,14 +27,13 @@ class Server:
       try:
         data = connection.recv(self.buffer_size).decode()
         if not data:
-          print('No data received, closing connection...')
           connection.close()
 
         if (data == 'JOIN'):
           self.handleServerJoin(connection, client_ip)
 
         elif (data == 'SEARCH'):
-          self.handleServerSearch(connection)
+          self.handleServerSearch(connection, client_ip)
 
         elif (data == 'UPDATE'):
           self.handleServerUpdate(connection, client_ip)
@@ -58,11 +53,18 @@ class Server:
       files_array = data.split(',')
     appendPeerData(files_array, client_ip, peer_download_port)
 
-    print(f'Files from peer: {data}')
+    print(f'Peer {client_ip}:{peer_download_port} adicionado com arquivos', end=' ')
+    for file in files_array:
+      print(file, end=' ')
+    print()
 
-  def handleServerSearch(self, connection):
+  def handleServerSearch(self, connection, client_ip):
     connection.sendall('SEARCH_OK'.encode())
-    file_name = connection.recv(self.buffer_size).decode()
+    data = connection.recv(self.buffer_size).decode().split('|', 1)
+    file_name = data[0]
+    peer_download_port = data[1]
+
+    print(f'Peer {client_ip}:{peer_download_port} soliocitou o arquivo {file_name}')
     peers_with_file_array = searchFile(file_name)
     if (peers_with_file_array == -1):
       connection.sendall(f'No peers with the file {file_name} were found.'.encode())
@@ -73,7 +75,7 @@ class Server:
 
   def handleServerUpdate(self, connection, client_ip):
     connection.sendall('UPDATE_OK'.encode())
-    data = connection.recv(self.buffer_size).decode().split('|',1)
+    data = connection.recv(self.buffer_size).decode().split('|', 1)
     file_name = data[0]
     peer_download_port = data[1]
     updatePeerData(file_name, client_ip, peer_download_port)

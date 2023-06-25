@@ -35,10 +35,13 @@ class Client:
       folder_full_path = os.getcwd() + self.folder_path
       files = os.listdir(folder_full_path)
       if not files:
-        print(f'Sou peer [{self.ip}]:[{self.download_port}] com nenhum arquivo')
+        print(f'Sou peer {self.ip}:{self.download_port} com nenhum arquivo')
         self.client_socket.sendall('NO_FILES'.encode())
       else:
-        print(f'Sou peer [{self.ip}]:[{self.download_port}] com os arquivos{files}')
+        print(f'Sou peer {self.ip}:{self.download_port} com os arquivos', end=' ')
+        for file in files:
+          print(file, end=' ')
+        print()
         
         delimiter = ","
         files_string= delimiter.join(files)
@@ -50,7 +53,8 @@ class Client:
 
     if (response == 'SEARCH_OK'):
       self.search_file = input('Input the file to search: ')
-      self.client_socket.sendall(self.search_file.encode())
+      data = self.search_file + '|' + str(self.download_port)
+      self.client_socket.sendall(data.encode())
       
       # Expects a list of peers with the file
       response = self.client_socket.recv(self.buffer_size).decode()
@@ -77,7 +81,8 @@ class Client:
     response = request_download_socket.recv(self.buffer_size).decode()
 
     if (response == 'DOWNLOAD_OK'):
-      request_file = input('Input the requested file name: ')
+      # request_file = input('Input the requested file name: ')
+      request_file = self.search_file
       request_download_socket.sendall(request_file.encode())
       response = request_download_socket.recv(self.buffer_size).decode()
       if (response == 'FILE_OK'):
@@ -92,13 +97,13 @@ class Client:
         while len(data) > 0:
           file.write(data)
           downloaded_file_size = os.path.getsize(request_file_path)
-          # print(f'Original   size {file_size}')
-          # print(f'Downloaded size {downloaded_file_size}')
           print(str(downloaded_file_size/1024) + 'KB / '+str(file_size/1024)+' KB downloaded!', end='\r')
+          print()
           if (len(data) < self.buffer_size): 
             file.close()
             break
           data = request_download_socket.recv(self.buffer_size)
+        print(f'Arquivo {request_file} baixado com sucesso na pasta {self.folder_path}')
         
         request_download_socket.close()
         self.sendUpdate(request_file)
