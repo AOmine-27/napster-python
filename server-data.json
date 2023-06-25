@@ -1,1 +1,5 @@
-{"lock": false, "data": [{"peer_ip": "127.0.0.1", "peer_port": "9000", "files": ["arquivo1.txt", "video.mp4", "arquivo2.txt", "video.mp4"]}, {"peer_ip": "127.0.0.1", "peer_port": "9001", "files": ["video.mp4", "arquivo1.txt"]}]}
+{
+  "lock": false,
+  "data": [
+  ]
+}
